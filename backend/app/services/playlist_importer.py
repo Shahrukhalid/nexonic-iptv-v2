@@ -61,7 +61,11 @@ def normalize_category(group: str, name: str, is_series: bool) -> str:
     if any(w in combined for w in ["entertainment", "variety", "show", "general"]):
         return "Entertainment"
         
-    return group.strip() if group and len(group.strip()) > 2 else "General"
+    # Playlists such as iptv-org list several categories ("Animation;Comedy"); keep the first one.
+    first = (group or "").split(";")[0].strip()
+    if len(first) <= 2 or first.lower() in ("undefined", "other", "others", "uncategorized"):
+        return "General"
+    return first
 
 CATEGORY_NAMES = {
     "news": "News", "sports": "Sports", "movies": "Movies", "music": "Music", "kids": "Kids",
