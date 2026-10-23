@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-nx-bg text-nx-text font-sans;
+  }
+}
+
+/* Custom Scrollbar for Sleek Dark Theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080C14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E2C4A;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0066FF;
+}
+
+/* Glassmorphism Surface */
+.nx-glass {
+  background: rgba(15, 22, 38, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 44, 74, 0.6);
+}
+
+.nx-glass-card {
+  background: rgba(21, 31, 52, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(30, 44, 74, 0.8);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nx-glass-card:hover {
+  border-color: rgba(0, 102, 255, 0.5);
+  box-shadow: 0 8px 30px -10px rgba(0, 102, 255, 0.3);
+  transform: translateY(-2px);
+}
