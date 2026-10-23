@@ -99,3 +99,25 @@ async def test_xtream_authentication_and_info():
     server_info = await get_server_info()
     assert server_info["port"] == "8000"
     assert "url" in server_info
+
+
+def test_category_from_playlist_url_and_country_groups():
+    from backend.app.services.playlist_importer import category_hint_from_url
+
+    assert category_hint_from_url("https://example.com/playlists/categories/news.m3u") == "News"
+    assert category_hint_from_url("https://example.com/playlists/categories/series.m3u") == "TV Series"
+    assert category_hint_from_url("https://example.com/playlists/all.m3u") is None
+
+    m3u = """#EXTM3U
+#EXTINF:-1 tvg-id="ZDFneo.de@SD" tvg-name="ZDFneo" tvg-country="DE" group-title="Germany",ZDFneo
+https://example.com/zdfneo.m3u8
+"""
+    # A country used as group-title must not become the category
+    plain = parse_m3u_content(m3u, default_source_name="Test")
+    assert plain[0]["country_code"] == "DE"
+    assert plain[0]["category"] == "General"
+
+    # A per-category playlist decides the category
+    hinted = parse_m3u_content(m3u, default_source_name="Test", category_hint="TV Series")
+    assert hinted[0]["category"] == "TV Series"
+    assert hinted[0]["is_series"] == 1

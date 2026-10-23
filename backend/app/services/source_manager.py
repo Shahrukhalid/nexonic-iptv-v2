@@ -4,19 +4,26 @@ from typing import List, Dict, Any, Optional
 from ..database import get_db
 from .playlist_importer import fetch_and_import_m3u
 
-# Public iptv-org playlists (https://github.com/iptv-org/iptv). Their contents are user-submitted links; review
-# what you import and only watch channels you are entitled to.
+# Default sources, imported in this order (the first source to list a channel decides its category):
+# 1. Nexonic IPTV per-category playlists (official free streams, checked daily).
+# 2. Public iptv-org playlists (https://github.com/iptv-org/iptv). Their contents are user-submitted links; review
+#    what you import and only watch channels you are entitled to. The full index comes last.
+NEXONIC_BASE = "https://raw.githubusercontent.com/Shahrukhalid/nexonic-iptv/main/playlists/categories"
+NEXONIC_CATEGORIES = [
+    ("series", "TV Series"), ("news", "News"), ("kids", "Kids"), ("movies", "Movies"), ("sports", "Sports"),
+    ("music", "Music"), ("documentary", "Documentary"), ("education", "Education"), ("business", "Business"),
+    ("culture", "Culture"), ("lifestyle", "Lifestyle"), ("weather", "Weather"), ("legislative", "Legislative"),
+    ("entertainment", "Entertainment"), ("general", "General"),
+]
+
 DEFAULT_PUBLIC_SOURCES = [
     {
-        "name": "Nexonic IPTV verified channels",
-        "url": "https://raw.githubusercontent.com/Shahrukhalid/nexonic-iptv/main/playlists/verified.m3u",
-        "attribution": "Nexonic IPTV (official free broadcaster streams, checked daily)"
-    },
-    {
-        "name": "IPTV-Org Worldwide General",
-        "url": "https://iptv-org.github.io/iptv/index.m3u",
-        "attribution": "iptv-org public directory"
-    },
+        "name": f"Nexonic IPTV \u00b7 {label}",
+        "url": f"{NEXONIC_BASE}/{key}.m3u",
+        "attribution": "Nexonic IPTV (official free broadcaster streams, checked daily)",
+    }
+    for key, label in NEXONIC_CATEGORIES
+] + [
     {
         "name": "IPTV-Org News Channels",
         "url": "https://iptv-org.github.io/iptv/categories/news.m3u",
@@ -51,6 +58,11 @@ DEFAULT_PUBLIC_SOURCES = [
         "name": "IPTV-Org Music",
         "url": "https://iptv-org.github.io/iptv/categories/music.m3u",
         "attribution": "iptv-org music streams"
+    },
+    {
+        "name": "IPTV-Org Worldwide (all channels)",
+        "url": "https://iptv-org.github.io/iptv/index.m3u",
+        "attribution": "iptv-org public directory"
     }
 ]
 

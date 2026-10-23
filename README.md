@@ -3,7 +3,7 @@
 **A self-hosted IPTV player and Xtream Codes server for free, legal TV channels. Runs on your own computer, verifies every stream, and lets you watch on a Smart TV.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB)
 ![React](https://img.shields.io/badge/React-18-61DAFB)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
 
@@ -38,7 +38,7 @@ Nexonic IPTV v2 does not host any streams. It does not unlock paid channels, byp
 
 ## Quick start
 
-Requirements: **Python 3.11+**, **Node.js 18+**, and optionally **ffmpeg** (for `ffprobe` checks).
+Requirements: **Python 3.10+**, **Node.js 18+**, and optionally **ffmpeg** (for `ffprobe` checks).
 
 ```bash
 git clone https://github.com/Shahrukhalid/nexonic-iptv-v2.git
@@ -48,6 +48,12 @@ bash scripts/start.sh   # starts the server
 ```
 
 Open **http://localhost:8000**. The first start imports the default playlists in the background; use the **Channel Health** page to check streams.
+
+To confirm everything works on your network (channel import, live stream checks, Smart TV login and playback relay), run this while the server is running:
+
+```bash
+python3 scripts/smoke_test.py
+```
 
 ```bash
 bash scripts/stop.sh    # stop the server

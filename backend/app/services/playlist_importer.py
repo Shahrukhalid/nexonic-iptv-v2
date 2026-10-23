@@ -63,7 +63,28 @@ def normalize_category(group: str, name: str, is_series: bool) -> str:
         
     return group.strip() if group and len(group.strip()) > 2 else "General"
 
-def parse_m3u_content(content: str, default_source_name: str = "Imported", default_source_url: str = "") -> List[Dict[str, Any]]:
+CATEGORY_NAMES = {
+    "news": "News", "sports": "Sports", "movies": "Movies", "music": "Music", "kids": "Kids",
+    "documentary": "Documentary", "education": "Education", "religious": "Religious",
+    "entertainment": "Entertainment", "general": "General", "series": "TV Series",
+}
+
+
+def category_hint_from_url(url: str) -> str | None:
+    """Playlists published per category (e.g. .../categories/news.m3u) tell us each channel's category."""
+    m = re.search(r"/categories/([a-z0-9_-]+)\.m3u8?(?:$|\?)", url or "", re.IGNORECASE)
+    if not m:
+        return None
+    key = m.group(1).lower()
+    return CATEGORY_NAMES.get(key, key.replace("-", " ").replace("_", " ").title())
+
+
+def parse_m3u_content(
+    content: str,
+    default_source_name: str = "Imported",
+    default_source_url: str = "",
+    category_hint: str | None = None,
+) -> List[Dict[str, Any]]:
     """Parse an extended M3U playlist. Adult-oriented entries are skipped."""
     lines = content.splitlines()
     channels = []
@@ -106,8 +127,16 @@ def parse_m3u_content(content: str, default_source_name: str = "Imported", defau
                 if detect_is_adult(channel_name, group_title):
                     current_meta = {}  # skip this entry and its URL line
                     continue
-                is_series = detect_is_series(channel_name, group_title)
-                category = normalize_category(group_title, channel_name, is_series)
+                # Some playlists group channels by country; a country name is not a category.
+                category_group = group_title
+                if group_title and tvg_country and normalize_country(group_title)[0] == normalize_country(tvg_country)[0]:
+                    category_group = ""
+                if category_hint:
+                    is_series = category_hint == "TV Series"
+                    category = category_hint
+                else:
+                    is_series = detect_is_series(channel_name, category_group)
+                    category = normalize_category(category_group, channel_name, is_series)
                 
                 country_code, country_name, country_flag = normalize_country(tvg_country)
                 
@@ -243,5 +272,7 @@ async def fetch_and_import_m3u(url: str, source_name: str, source_id: int | None
             resp.raise_for_status()
             content = resp.text
 
-    parsed = parse_m3u_content(content, default_source_name=source_name, default_source_url=url)
+    parsed = parse_m3u_content(
+        content, default_source_name=source_name, default_source_url=url, category_hint=category_hint_from_url(url)
+    )
     return await save_channels_to_db(parsed, source_id=source_id)
