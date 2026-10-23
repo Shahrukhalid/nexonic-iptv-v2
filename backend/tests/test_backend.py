@@ -121,3 +121,9 @@ https://example.com/zdfneo.m3u8
     hinted = parse_m3u_content(m3u, default_source_name="Test", category_hint="TV Series")
     assert hinted[0]["category"] == "TV Series"
     assert hinted[0]["is_series"] == 1
+
+    # Multi-category groups keep their first category; "Undefined" becomes General
+    from backend.app.services.playlist_importer import normalize_category
+    assert normalize_category("Animation;Comedy", "Toon TV", False) == "Animation"
+    assert normalize_category("Auto;Travel", "Drive", False) == "Auto"
+    assert normalize_category("Undefined", "Channel 5", False) == "General"
