@@ -1,0 +1,32 @@
+# Runtime data (database, playlists, logs, media)
+local-data/
+*.db
+*.db-wal
+*.db-shm
+*.log
+*.pid
+
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Node / build
+node_modules/
+frontend/dist/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Archives
+*.tgz
+*.tar.gz
+*.zip
