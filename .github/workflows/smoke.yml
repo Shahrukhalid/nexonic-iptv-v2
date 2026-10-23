@@ -1,0 +1,33 @@
+name: End-to-end check
+
+# Installs the app the way a user would, starts it, and checks real channels on the live internet.
+# Runs weekly and on demand (Actions tab -> End-to-end check -> Run workflow).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install (scripts/setup.sh)
+        run: bash scripts/setup.sh
+      - name: Start (scripts/start.sh)
+        run: bash scripts/start.sh
+      - name: Check import, live streams, Smart TV login and relay
+        run: python3 scripts/smoke_test.py
+      - name: Server log
+        if: always()
+        run: tail -n 80 local-data/logs/backend.log || true
