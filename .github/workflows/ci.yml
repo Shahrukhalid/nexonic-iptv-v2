@@ -31,6 +31,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: npm install --no-audit --no-fund
+      - run: npx -y npm@11.6.2 install --no-audit --no-fund  # npm 10 crashes resolving vitest 4 peers
       - run: npm test
       - run: npm run build
