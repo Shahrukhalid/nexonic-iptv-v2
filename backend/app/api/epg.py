@@ -1,8 +1,8 @@
-from typing import List, Optional
 from fastapi import APIRouter, Query, UploadFile, File, HTTPException
-import httpx
 from ..services.epg_service import get_now_and_next_program, get_timeline_for_channels, parse_and_import_xmltv
-from ..utils.security import is_safe_remote_url
+from ..utils.security import is_safe_remote_url, safe_async_client
+
+MAX_UPLOAD_BYTES = 100 * 1024 * 1024
 
 router = APIRouter(prefix="/api/epg", tags=["EPG Guide"])
 
@@ -21,7 +21,7 @@ async def import_epg_from_url(url: str = Query(...)):
         raise HTTPException(status_code=400, detail="Invalid or unsafe EPG URL")
 
     try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+        async with safe_async_client(timeout=30.0, follow_redirects=True) as client:
             resp = await client.get(url, headers={"User-Agent": "NexonicIPTV/2.0"})
             resp.raise_for_status()
             count = await parse_and_import_xmltv(resp.content)
@@ -32,8 +32,12 @@ async def import_epg_from_url(url: str = Query(...)):
 @router.post("/upload")
 async def upload_epg_file(file: UploadFile = File(...)):
     try:
-        content = await file.read()
+        content = await file.read(MAX_UPLOAD_BYTES + 1)
+        if len(content) > MAX_UPLOAD_BYTES:
+            raise HTTPException(status_code=413, detail="EPG file is larger than 100 MB")
         count = await parse_and_import_xmltv(content)
         return {"status": "SUCCESS", "filename": file.filename, "programs_imported": count}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse XMLTV file: {str(e)}")

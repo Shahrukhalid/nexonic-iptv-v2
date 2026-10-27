@@ -7,8 +7,10 @@ from datetime import datetime
 from typing import Optional, Dict, Any, List
 import httpx
 
+from ..utils.security import safe_async_client
+
 from ..database import get_db
-from ..config import HTTP_TIMEOUT_SECONDS, FFPROBE_TIMEOUT_SECONDS, DEFAULT_VERIFICATION_CONCURRENCY
+from ..config import FFPROBE_TIMEOUT_SECONDS, DEFAULT_VERIFICATION_CONCURRENCY
 
 FFPROBE_BIN = shutil.which("ffprobe") or "/opt/homebrew/bin/ffprobe"
 
@@ -55,7 +57,7 @@ class VerificationEngine:
         try:
             headers = {"User-Agent": "NexonicIPTV/2.0", "Accept": "*/*"}
             timeout_cfg = httpx.Timeout(timeout_sec, connect=min(3.5, timeout_sec), read=timeout_sec)
-            async with httpx.AsyncClient(timeout=timeout_cfg, follow_redirects=True) as client:
+            async with safe_async_client(timeout=timeout_cfg, follow_redirects=True) as client:
                 resp = await client.get(stream_url, headers=headers)
                 latency = int((time.time() - start_time) * 1000)
                 result["response_time_ms"] = latency

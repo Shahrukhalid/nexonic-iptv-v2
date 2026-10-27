@@ -47,7 +47,7 @@ export const VerificationBadge: React.FC<VerificationBadgeProps> = ({
           bg: 'bg-rose-500/10 border-rose-500/30 text-rose-400',
           dot: 'bg-rose-400',
           icon: <XCircle className="w-3 h-3" />,
-          label: status === 'INVALID STREAM' ? 'INVALID' : 'OFFLINE'
+          label: status === 'INVALID STREAM' ? 'INVALID' : status === 'UNKNOWN ERROR' ? 'ERROR' : 'OFFLINE'
         };
       case 'TIMEOUT':
         return {

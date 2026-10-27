@@ -12,11 +12,15 @@ export const Countries: React.FC<CountriesProps> = ({ onSelectCountry }) => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'total' | 'working' | 'name'>('total');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let active = true;
     fetchCountryStats()
-      .then(setCountries)
-      .finally(() => setLoading(false));
+      .then(data => { if (active) setCountries(data); })
+      .catch((err: unknown) => { if (active) setError(err instanceof Error ? err.message : String(err)); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, []);
 
   const filteredCountries = countries
@@ -74,6 +78,8 @@ export const Countries: React.FC<CountriesProps> = ({ onSelectCountry }) => {
 
       {loading ? (
         <div className="py-20 text-center text-nx-muted">Loading country catalog...</div>
+      ) : error ? (
+        <div className="py-20 text-center text-rose-400">Could not load countries: {error}</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredCountries.map(c => (

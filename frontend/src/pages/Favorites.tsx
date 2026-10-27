@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Channel } from '../types';
 import { fetchChannels } from '../services/api';
 import { ChannelCard } from '../components/ChannelCard';
@@ -16,24 +16,38 @@ export const Favorites: React.FC<FavoritesProps> = ({
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadFavorites = async () => {
+  // Each load gets a number; only the newest one may update state (fast toggles can resolve out of order).
+  const latest = useRef(0);
+  const mounted = useRef(true);
+  const activeRef = useRef(activeChannel);
+  activeRef.current = activeChannel;
+
+  const loadFavorites = useCallback(async () => {
+    const id = ++latest.current;
     setLoading(true);
     try {
       const res = await fetchChannels({
         is_favorite: true,
         page_size: 100
       });
+      if (!mounted.current || id !== latest.current) return;
       setChannels(res.items);
-      if (!activeChannel && res.items.length > 0) {
+      if (!activeRef.current && res.items.length > 0) {
         onSelectChannel(res.items[0]);
       }
+    } catch {
+      if (mounted.current && id === latest.current) setChannels([]);
     } finally {
-      setLoading(false);
+      if (mounted.current && id === latest.current) setLoading(false);
     }
-  };
+  }, [onSelectChannel]);
 
   useEffect(() => {
+    mounted.current = true;
     loadFavorites();
+    return () => { mounted.current = false; };
+    // Load once on mount; later reloads come from onUpdated.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -72,7 +86,7 @@ export const Favorites: React.FC<FavoritesProps> = ({
               channel={ch}
               isActive={activeChannel?.id === ch.id}
               onSelect={onSelectChannel}
-              onUpdated={() => loadFavorites()}
+              onUpdated={loadFavorites}
             />
           ))}
         </div>
