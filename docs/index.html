@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nexonic IPTV v2: Self-Hosted IPTV Player and Xtream Codes Server</title>
+<meta name="description" content="Self-hosted IPTV player and Xtream Codes server for free, legal live TV. Verifies streams, includes an EPG TV guide and works with IPTV Smarters and TiviMate. FastAPI and React.">
+<meta name="keywords" content="IPTV player, Xtream Codes server, self-hosted IPTV, free IPTV, M3U, EPG, XMLTV, HLS, Smart TV, TiviMate, IPTV Smarters, FastAPI, React">
+<meta name="author" content="Shahrukh Khalid">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#c0242f">
+<link rel="canonical" href="https://shahrukhalid.github.io/nexonic-iptv-v2/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nexonic IPTV v2">
+<meta property="og:title" content="Nexonic IPTV v2: Self-Hosted IPTV Player and Xtream Codes Server">
+<meta property="og:description" content="Self-hosted IPTV player and Xtream Codes server for free, legal live TV. Verifies streams, includes an EPG TV guide and works with IPTV Smarters and TiviMate. FastAPI and React.">
+<meta property="og:url" content="https://shahrukhalid.github.io/nexonic-iptv-v2/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nexonic IPTV v2: Self-Hosted IPTV Player and Xtream Codes Server">
+<meta name="twitter:description" content="Self-hosted IPTV player and Xtream Codes server for free, legal live TV. Verifies streams, includes an EPG TV guide and works with IPTV Smarters and TiviMate. FastAPI and React.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Nexonic IPTV v2", "url": "https://shahrukhalid.github.io/nexonic-iptv-v2/", "description": "Self-hosted IPTV player and Xtream Codes server for free, legal live TV. Verifies streams, includes an EPG TV guide and works with IPTV Smarters and TiviMate. FastAPI and React.", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS, Windows, Linux", "programmingLanguage": "Python, TypeScript", "license": "https://github.com/Shahrukhalid/nexonic-iptv-v2/blob/main/LICENSE", "codeRepository": "https://github.com/Shahrukhalid/nexonic-iptv-v2", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Shahrukh Khalid", "url": "https://github.com/Shahrukhalid"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is Nexonic IPTV v2?", "acceptedAnswer": {"@type": "Answer", "text": "A self-hosted IPTV player and Xtream Codes server for free, legal TV channels. It runs on your own computer, verifies streams and lets you watch on a Smart TV."}}, {"@type": "Question", "name": "Does it provide or host TV channels?", "acceptedAnswer": {"@type": "Answer", "text": "No. It does not host any streams. The default sources are Nexonic IPTV (official broadcaster streams) and the public iptv-org playlists, and you can add your own M3U playlists."}}, {"@type": "Question", "name": "How do I watch on a Smart TV?", "acceptedAnswer": {"@type": "Answer", "text": "Set NEXONIC_HOST=0.0.0.0 in .env and restart, open Connect Smart TV in the app for your server URL, username and password, then choose Xtream Codes API in IPTV Smarters, TiviMate or a similar app. Keep it on your home network and do not forward the port on your router."}}, {"@type": "Question", "name": "Is it safe to run?", "acceptedAnswer": {"@type": "Answer", "text": "It listens on 127.0.0.1 by default, has no telemetry, generates a random Smart TV password per install, and its stream relay is not an open proxy."}}, {"@type": "Question", "name": "Can it unlock paid channels or bypass regional restrictions?", "acceptedAnswer": {"@type": "Answer", "text": "No. It does not unlock paid channels, bypass DRM or get around regional restrictions."}}, {"@type": "Question", "name": "What do I need to run it?", "acceptedAnswer": {"@type": "Answer", "text": "Python 3.10+, Node.js 18+, and optionally ffmpeg for ffprobe codec and resolution checks."}}, {"@type": "Question", "name": "What licence is it under?", "acceptedAnswer": {"@type": "Answer", "text": "MIT. Channel names and logos belong to their owners."}}]}</script>
+<style>
+:root{--bg:#fff;--fg:#1b1f24;--mut:#57606a;--card:#f6f8fa;--bd:#d0d7de;--ac:#c0242f;--acfg:#fff;--link:#c0242f}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--mut:#9da7b3;--card:#161b22;--bd:#30363d;--ac:#ff6b75;--acfg:#0d1117;--link:#ff6b75}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--link)}a:focus-visible,summary:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:var(--bg);padding:8px;z-index:9}
+.wrap{max-width:60rem;margin:0 auto;padding:0 16px}
+header.top{border-bottom:1px solid var(--bd)}header.top .wrap{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;padding-top:12px;padding-bottom:12px}
+header.top strong{margin-right:auto}nav a{margin-right:14px;text-decoration:none}
+.hero{padding:48px 0 24px}h1{font-size:clamp(1.8rem,5vw,2.75rem);line-height:1.15;margin:0 0 12px}
+.lead{font-size:1.15rem;color:var(--mut);margin:0 0 20px}
+.btn{display:inline-block;padding:10px 18px;border-radius:8px;background:var(--ac);color:var(--acfg);font-weight:600;text-decoration:none;margin:0 8px 8px 0}
+.btn.alt{background:transparent;color:var(--link);border:1px solid var(--bd)}
+h2{margin:40px 0 12px;font-size:1.5rem}h3{margin:0 0 6px;font-size:1.05rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px}.card p{margin:0;color:var(--mut)}
+.notice{border-left:4px solid var(--ac);background:var(--card);padding:12px 16px;border-radius:6px;margin:16px 0}
+pre{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px;overflow-x:auto;font-size:.9rem}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--bd)}
+details{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;margin:8px 0}summary{cursor:pointer;font-weight:600}details p{margin:8px 0 0}
+ul.l{padding-left:1.2rem}ul.plain{list-style:none;padding:0;margin:0}ul.plain li{margin:6px 0}
+footer{border-top:1px solid var(--bd);margin-top:48px;padding:24px 0 40px;color:var(--mut);font-size:.95rem}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><strong>Nexonic IPTV v2</strong><nav aria-label="Main"><a href="#features">Features</a><a href="#quick-start">Quick start</a><a href="#faq">FAQ</a><a href="https://github.com/Shahrukhalid/nexonic-iptv-v2">GitHub</a></nav></div></header>
+<main id="main"><div class="wrap">
+<section class="hero"><h1>Self-hosted IPTV player and Xtream Codes server for free, legal TV</h1><p class="lead">Verify free channels, browse by country and watch on your Smart TV.</p><p>
+<a class="btn" href="#quick-start">Quick start</a><a class="btn alt" href="https://github.com/Shahrukhalid/nexonic-iptv-v2">View on GitHub</a>
+<a class="btn alt" href="https://github.com/Shahrukhalid/nexonic-iptv-v2/releases">Releases</a></p></section>
+<section aria-labelledby="what"><h2 id="what">What it is</h2>
+<p>Nexonic IPTV v2 is the desktop and Smart TV companion to Nexonic IPTV, the curated list of official free-to-air channels. Run it on your computer to browse thousands of free channels by country, category or language and see which streams are working right now.</p>
+<p>It can also act as an Xtream Codes API and M3U server, so IPTV Smarters, TiviMate or any other Xtream Codes player can log in to your own computer.</p>
+</section>
+<div class="notice" role="note"><strong>Limits.</strong> Nexonic IPTV v2 does not host any streams. It does not unlock paid channels, bypass DRM or get around regional restrictions, and it is not a subscription service. Only watch channels you are entitled to in your country.</div>
+<section aria-labelledby="features"><h2 id="features">Features</h2><div class="grid">
+<div class="card"><h3>Worldwide live TV browser</h3><p>Search by channel, country, language or category, with country flags and A to Z category navigation.</p></div>
+<div class="card"><h3>Real stream checks</h3><p>HTTP status, latency, HLS manifest and segment checks, DRM detection and optional ffprobe probing. Dead links are flagged, not hidden.</p></div>
+<div class="card"><h3>Channel health center</h3><p>Working, unstable, offline and region-restricted counts, with CSV and JSON exports.</p></div>
+<div class="card"><h3>Xtream Codes API and M3U server</h3><p>player_api.php, get.php and xmltv.php endpoints for Smart TV apps.</p></div>
+<div class="card"><h3>TV guide (EPG)</h3><p>XMLTV import with now and next listings.</p></div>
+<div class="card"><h3>Favourites and history</h3><p>TV series channels, favourites and watch history, all stored locally.</p></div>
+<div class="card"><h3>Offline library</h3><p>Play video files you put in local-data/offline_media/.</p></div>
+<div class="card"><h3>Bring your own playlists</h3><p>Add any M3U URL or upload a file from the Sources page.</p></div>
+</div></section>
+<section aria-labelledby="privacy"><h2 id="privacy">Privacy and safety</h2><ul class="l">
+<li>Local only by default: the server listens on 127.0.0.1.</li>
+<li>No telemetry, analytics, tracking or account; data stays in local-data/.</li>
+<li>Each install gets a random Smart TV password you can change in Settings.</li>
+<li>Not an open proxy: the relay only forwards hosts in your catalogue and blocks private and cloud-metadata addresses.</li>
+<li>Adult-oriented entries are skipped when playlists are imported.</li>
+</ul></section>
+<section aria-labelledby="quick-start"><h2 id="quick-start">Quick start</h2>
+<p>Requirements: Python 3.10+, Node.js 18+, and optionally ffmpeg for ffprobe checks.</p>
+<h3>Install and start</h3><pre><code>git clone https://github.com/Shahrukhalid/nexonic-iptv-v2.git
+cd nexonic-iptv-v2
+bash scripts/setup.sh   # backend venv, packages, web app build
+bash scripts/start.sh   # then open http://localhost:8000</code></pre>
+<p>The first start imports the default playlists in the background; use the Channel Health page to check streams.</p></section>
+<section aria-labelledby="docs"><h2 id="docs">Documentation</h2><ul class="l">
+<li><a href="https://github.com/Shahrukhalid/nexonic-iptv-v2/blob/main/docs/SMART_TV_SETUP.md">Smart TV setup</a></li>
+<li><a href="https://github.com/Shahrukhalid/nexonic-iptv-v2/blob/main/docs/ARCHITECTURE.md">Architecture</a></li>
+</ul></section>
+<section aria-labelledby="faq"><h2 id="faq">Frequently asked questions</h2>
+<details><summary>What is Nexonic IPTV v2?</summary><p>A self-hosted IPTV player and Xtream Codes server for free, legal TV channels. It runs on your own computer, verifies streams and lets you watch on a Smart TV.</p></details>
+<details><summary>Does it provide or host TV channels?</summary><p>No. It does not host any streams. The default sources are Nexonic IPTV (official broadcaster streams) and the public iptv-org playlists, and you can add your own M3U playlists.</p></details>
+<details><summary>How do I watch on a Smart TV?</summary><p>Set NEXONIC_HOST=0.0.0.0 in .env and restart, open Connect Smart TV in the app for your server URL, username and password, then choose Xtream Codes API in IPTV Smarters, TiviMate or a similar app. Keep it on your home network and do not forward the port on your router.</p></details>
+<details><summary>Is it safe to run?</summary><p>It listens on 127.0.0.1 by default, has no telemetry, generates a random Smart TV password per install, and its stream relay is not an open proxy.</p></details>
+<details><summary>Can it unlock paid channels or bypass regional restrictions?</summary><p>No. It does not unlock paid channels, bypass DRM or get around regional restrictions.</p></details>
+<details><summary>What do I need to run it?</summary><p>Python 3.10+, Node.js 18+, and optionally ffmpeg for ffprobe codec and resolution checks.</p></details>
+<details><summary>What licence is it under?</summary><p>MIT. Channel names and logos belong to their owners.</p></details>
+</section>
+<section aria-labelledby="links"><h2 id="links">Project links</h2><ul class="plain">
+<li><a href="https://github.com/Shahrukhalid/nexonic-iptv-v2">Source code on GitHub</a></li><li><a href="https://github.com/Shahrukhalid/nexonic-iptv-v2/releases">Releases</a></li><li><a href="https://github.com/Shahrukhalid/nexonic-iptv-v2/issues">Issues and feature requests</a></li>
+</ul></section>
+<section aria-labelledby="more"><h2 id="more">More projects by Shahrukh Khalid</h2><div class="grid">
+<div class="card"><h3><a href="https://github.com/Shahrukhalid/stark-os">stark-os</a></h3><p>Self-hosted multi-agent social media manager; every post needs your approval.</p></div>
+<div class="card"><h3><a href="https://github.com/Shahrukhalid/verilive">verilive</a></h3><p>In-browser deepfake check for video calls; video never leaves your device.</p></div>
+<div class="card"><h3><a href="https://github.com/Shahrukhalid/nexonic-iptv">nexonic-iptv</a></h3><p>Free IPTV M3U playlists of legal, officially free live TV channels.</p></div>
+<div class="card"><h3><a href="https://github.com/Shahrukhalid/facevision-ai">facevision-ai</a></h3><p>Local, consent-based face detection, recognition and anonymisation.</p></div>
+<div class="card"><h3><a href="https://github.com/Shahrukhalid/nexonic-sentinel">nexonic-sentinel</a></h3><p>Free GitHub App that triages issues, reviews PRs and merges safe dependency updates.</p></div>
+<div class="card"><h3><a href="https://github.com/Shahrukhalid/morphlive">morphlive</a></h3><p>Experimental local camera and voice-effects prototype (goal not achieved).</p></div>
+</div></section></div></main>
+<footer><div class="wrap"><p>Channel names and logos belong to their owners.</p><p>By <a href="https://github.com/Shahrukhalid">Shahrukh Khalid</a>. <a href="https://github.com/Shahrukhalid/nexonic-iptv-v2">Source on GitHub</a>.</p></div></footer>
+</body>
+</html>
