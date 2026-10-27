@@ -1,13 +1,12 @@
 import re
 import json
-import httpx
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 from ..database import get_db
 from ..utils.countries import normalize_country
 from ..config import PLAYLISTS_DIR
-from ..utils.security import is_safe_remote_url
+from ..utils.security import is_safe_remote_url, safe_async_client
 
 EXTINF_REGEX = re.compile(
     r'#EXTINF:(?P<duration>[-0-9]+)\s*(?P<attributes>[^\n\r]*)[,](?P<name>[^\n\r]+)'
@@ -271,7 +270,7 @@ async def fetch_and_import_m3u(url: str, source_name: str, source_id: int | None
     else:
         if not is_safe_remote_url(url):
             raise ValueError(f"URL is invalid or unsafe: {url}")
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+        async with safe_async_client(timeout=30.0, follow_redirects=True) as client:
             resp = await client.get(url, headers={"User-Agent": "NexonicIPTV/2.0"})
             resp.raise_for_status()
             content = resp.text

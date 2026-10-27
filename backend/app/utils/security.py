@@ -1,6 +1,8 @@
 import ipaddress
 import urllib.parse
 
+import httpx
+
 from fastapi import HTTPException, Request
 
 LOCAL_CLIENTS = {"127.0.0.1", "::1", "localhost", "testclient"}
@@ -32,3 +34,17 @@ def is_safe_remote_url(url: str) -> bool:
         return not (ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast)
     except Exception:
         return False
+
+
+async def _refuse_unsafe_hop(request: httpx.Request) -> None:
+    """httpx request hook: runs for the first request and every redirect hop, so a public URL cannot
+    redirect the server to a private, loopback or metadata address (SSRF via redirect)."""
+    if not is_safe_remote_url(str(request.url)):
+        raise httpx.RequestError("Refused unsafe redirect target", request=request)
+
+
+def safe_async_client(**kwargs) -> httpx.AsyncClient:
+    """An httpx.AsyncClient that checks every hop (including redirects) with is_safe_remote_url."""
+    hooks = kwargs.pop("event_hooks", {}) or {}
+    hooks = {**hooks, "request": [*hooks.get("request", []), _refuse_unsafe_hop]}
+    return httpx.AsyncClient(event_hooks=hooks, **kwargs)
