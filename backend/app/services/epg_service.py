@@ -1,10 +1,11 @@
-import re
 import gzip
-import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
-from typing import List, Dict, Any, Optional
-import httpx
+import io
+from defusedxml import ElementTree as ET
+from datetime import datetime
+from typing import List, Dict, Any
 from ..database import get_db
+
+MAX_XMLTV_BYTES = 200 * 1024 * 1024
 
 def parse_xmltv_time(time_str: str) -> str:
     """
@@ -26,7 +27,11 @@ async def parse_and_import_xmltv(content_bytes: bytes) -> int:
     Inserts or updates programs in epg_programs table.
     """
     if content_bytes.startswith(b"\x1f\x8b"):
-        xml_data = gzip.decompress(content_bytes)
+        # Cap the decompressed size so a small gzip "bomb" cannot exhaust memory.
+        with gzip.GzipFile(fileobj=io.BytesIO(content_bytes)) as gz:
+            xml_data = gz.read(MAX_XMLTV_BYTES + 1)
+        if len(xml_data) > MAX_XMLTV_BYTES:
+            raise ValueError("XMLTV guide is larger than 200 MB after decompression")
     else:
         xml_data = content_bytes
 
