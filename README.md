@@ -1,5 +1,7 @@
 # Nexonic IPTV v2
 
+**Website: <https://shahrukhalid.github.io/nexonic-iptv-v2/>**
+
 **A self-hosted IPTV player and Xtream Codes server for free, legal TV channels. Runs on your own computer, verifies every stream, and lets you watch on a Smart TV.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
