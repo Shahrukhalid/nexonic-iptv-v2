@@ -14,7 +14,11 @@ export const EpgGuide: React.FC<EpgGuideProps> = ({ onSelectChannel }) => {
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchChannels({ page_size: 30 }).then(res => setChannels(res.items));
+    let active = true;
+    fetchChannels({ page_size: 30 })
+      .then(res => { if (active) setChannels(res.items); })
+      .catch((err: unknown) => { if (active) setStatusMsg(`Could not load channels: ${err instanceof Error ? err.message : String(err)}`); });
+    return () => { active = false; };
   }, []);
 
   const handleImportUrl = async (e: React.FormEvent) => {
@@ -24,15 +28,15 @@ export const EpgGuide: React.FC<EpgGuideProps> = ({ onSelectChannel }) => {
     setStatusMsg('Importing XMLTV EPG data in background...');
     try {
       const res = await fetch(`/api/epg/import-url?url=${encodeURIComponent(epgUrl)}`, { method: 'POST' });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setStatusMsg(`Successfully imported ${data.programs_imported} program schedules!`);
         setEpgUrl('');
       } else {
         setStatusMsg(`Import failed: ${data.detail}`);
       }
-    } catch (err: any) {
-      setStatusMsg(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      setStatusMsg(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setImporting(false);
     }
@@ -47,14 +51,14 @@ export const EpgGuide: React.FC<EpgGuideProps> = ({ onSelectChannel }) => {
       const formData = new FormData();
       formData.append('file', file);
       const res = await fetch('/api/epg/upload', { method: 'POST', body: formData });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setStatusMsg(`Successfully imported ${data.programs_imported} program schedules from ${file.name}!`);
       } else {
         setStatusMsg(`Import failed: ${data.detail}`);
       }
-    } catch (err: any) {
-      setStatusMsg(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      setStatusMsg(`Error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setImporting(false);
     }

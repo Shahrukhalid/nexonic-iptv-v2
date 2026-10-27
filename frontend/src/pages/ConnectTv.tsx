@@ -7,15 +7,31 @@ export const ConnectTv: React.FC = () => {
   const [info, setInfo] = useState<ConnectInfo | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [blocked, setBlocked] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
 
   useEffect(() => {
-    fetchConnectInfo().then(setInfo).catch(() => setBlocked(true));
+    let active = true;
+    fetchConnectInfo()
+      .then(data => { if (active) setInfo(data); })
+      .catch((err: unknown) => {
+        if (!active) return;
+        // Only a 403 means "not this computer"; anything else is a real load failure.
+        if ((err as { status?: number })?.status === 403) setBlocked(true);
+        else setLoadFailed(true);
+      });
+    return () => { active = false; };
   }, []);
 
-  const copyToClipboard = (text: string, field: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedField(field);
-    setTimeout(() => setCopiedField(null), 2000);
+  const copyToClipboard = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyFailed(false);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch {
+      setCopyFailed(true); // e.g. clipboard permission denied or not a secure context
+    }
   };
 
   return (
@@ -30,6 +46,9 @@ export const ConnectTv: React.FC = () => {
         </p>
       </div>
 
+      {copyFailed && (
+        <p className="text-xs text-rose-400">Copy failed. Select the text and copy it manually.</p>
+      )}
       {info ? (
         <div className="space-y-6">
           {!info.shared_on_network && (
@@ -208,7 +227,9 @@ export const ConnectTv: React.FC = () => {
         <div className="py-20 text-center text-nx-muted">
           {blocked
             ? 'For your security, TV login details are only shown on the computer running Nexonic IPTV v2.'
-            : 'Loading local connection info...'}
+            : loadFailed
+              ? 'Could not load connection info. Check that the Nexonic IPTV v2 server is running, then reload.'
+              : 'Loading local connection info...'}
         </div>
       )}
     </div>

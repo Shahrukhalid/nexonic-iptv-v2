@@ -275,7 +275,7 @@ export async function fetchSettings(): Promise<AppSettings> {
 
 export async function fetchConnectInfo(): Promise<ConnectInfo> {
   const res = await fetch(`${BASE_URL}/api/settings/connect-info`);
-  if (!res.ok) throw new Error('Failed to fetch connect info');
+  if (!res.ok) throw Object.assign(new Error('Failed to fetch connect info'), { status: res.status });
   return res.json();
 }
 
