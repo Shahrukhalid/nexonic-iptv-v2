@@ -44,8 +44,20 @@ def check(name, ok, detail=""):
         sys.exit(1)
 
 
+def wait_for_server(seconds=120):
+    """start.sh returns before the server is listening, so retry until it answers."""
+    deadline = time.time() + seconds
+    while True:
+        try:
+            return get("/api/health")
+        except (urllib.error.URLError, ConnectionError, TimeoutError):
+            if time.time() > deadline:
+                raise
+            time.sleep(2)
+
+
 def main():
-    status, health, _ = get("/api/health")
+    status, health, _ = wait_for_server()
     check("server is healthy", status == 200 and health.get("status") == "HEALTHY")
 
     status, page, _ = get("/", raw=True)
