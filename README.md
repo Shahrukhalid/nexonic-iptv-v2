@@ -101,6 +101,14 @@ local-data/         created at runtime, never committed
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
 
+## Roadmap
+
+Planned work that contributors can pick up. Each item becomes an issue with details; comment there to take it on.
+
+- [ ] Docker image for one-command setup on a home server or NAS
+- [ ] Favourites list in the web player that also appears in Xtream Codes apps
+- [ ] Translations of the web interface (Arabic, Urdu and Spanish first)
+
 ## Contributing
 
 Issues and pull requests are welcome. To suggest a channel, open it on [Nexonic IPTV](https://github.com/Shahrukhalid/nexonic-iptv) with the broadcaster's official stream page. Please don't submit links to paid, pirated or adult content.
