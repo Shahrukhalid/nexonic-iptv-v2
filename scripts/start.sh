@@ -29,17 +29,29 @@ mkdir -p "$PROJECT_ROOT/local-data/logs"
 echo "Starting Nexonic IPTV v2 server on $HOST:$PORT..."
 export PYTHONPATH="$PROJECT_ROOT"
 nohup "$PROJECT_ROOT/backend/.venv/bin/python" -m uvicorn backend.app.main:app --host "$HOST" --port "$PORT" > "$PROJECT_ROOT/local-data/logs/backend.log" 2>&1 &
-echo "$!" > "$PROJECT_ROOT/local-data/backend.pid"
+BACKEND_PID=$!
+echo "$BACKEND_PID" > "$PROJECT_ROOT/local-data/backend.pid"
+
+# Wait briefly and verify backend process is still alive
+sleep 2
+if ! kill -0 "$BACKEND_PID" 2>/dev/null; then
+  echo "ERROR: Backend failed to start. Check $PROJECT_ROOT/local-data/logs/backend.log" >&2
+  exit 1
+fi
 
 if [ "${NEXONIC_DEV:-0}" = "1" ]; then
   echo "Starting Vite dev server on 127.0.0.1:5173..."
   cd "$PROJECT_ROOT/frontend"
   CI=1 nohup ./node_modules/.bin/vite --host 127.0.0.1 --port 5173 > "$PROJECT_ROOT/local-data/logs/frontend.log" 2>&1 &
-  echo "$!" > "$PROJECT_ROOT/local-data/frontend.pid"
+  FRONTEND_PID=$!
+  echo "$FRONTEND_PID" > "$PROJECT_ROOT/local-data/frontend.pid"
   cd "$PROJECT_ROOT"
+  sleep 1
+  if ! kill -0 "$FRONTEND_PID" 2>/dev/null; then
+    echo "ERROR: Frontend failed to start. Check $PROJECT_ROOT/local-data/logs/frontend.log" >&2
+    exit 1
+  fi
 fi
-
-sleep 2
 
 echo "============================================================"
 echo "Nexonic IPTV v2 is running: http://localhost:$PORT"
