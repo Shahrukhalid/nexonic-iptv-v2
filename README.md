@@ -9,6 +9,8 @@
 ![React](https://img.shields.io/badge/React-18-61DAFB)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
 
+<p align="center"><img src="docs/demo.gif" alt="Nexonic IPTV v2 overview: self-hosted IPTV player and Xtream Codes server" width="820"></p>
+
 Nexonic IPTV v2 is the desktop and Smart TV companion to [Nexonic IPTV](https://github.com/Shahrukhalid/nexonic-iptv), the curated list of official free-to-air channels. Run it on your computer to browse thousands of free channels by country, category or language, see which streams are working right now, and send them to IPTV Smarters, TiviMate or any other Xtream Codes player.
 
 ---
